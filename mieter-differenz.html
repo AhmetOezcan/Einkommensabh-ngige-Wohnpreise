@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Mieter Differenz Rechner</title>
+  <style>
+    .mieter-row { margin-bottom: 10px; border: 1px solid #ccc; padding: 8px; }
+    .mieter-row input { margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Mieter Übersicht</h2>
+  <div id="mieter-list"></div>
+  <button onclick="addMieter()">Mieter hinzufügen</button>
+  <h3 id="gesamt-diff">Gesamtdifferenz: 0 €</h3>
+
+  <script>
+    let mieter = [
+      { name: "Mieter A", mietpreis: 500, eigentlicherMietpreis: 700 },
+      { name: "Mieter B", mietpreis: 1700, eigentlicherMietpreis: 1400 }
+    ];
+
+    function render() {
+      const list = document.getElementById('mieter-list');
+      list.innerHTML = '';
+      let gesamt = 0;
+      mieter.forEach((m, i) => {
+        const diff = m.mietpreis - m.eigentlicherMietpreis;
+        gesamt += diff;
+        const row = document.createElement('div');
+        row.className = 'mieter-row';
+        row.innerHTML = `
+          <input type="text" value="${m.name}" placeholder="Name" onchange="updateMieter(${i}, 'name', this.value)">
+          <input type="number" value="${m.mietpreis}" placeholder="Mietpreis" onchange="updateMieter(${i}, 'mietpreis', this.value)">
+          <input type="number" value="${m.eigentlicherMietpreis}" placeholder="Eigentlicher Mietpreis" onchange="updateMieter(${i}, 'eigMiet', this.value)">
+          <span>Differenz: ${diff} €</span>
+          <button onclick="removeMieter(${i})">Entfernen</button>
+        `;
+        list.appendChild(row);
+      });
+      document.getElementById('gesamt-diff').innerText = `Gesamtdifferenz: ${gesamt} €`;
+    }
+
+    function updateMieter(index, field, value) {
+      if (field === 'name') mieter[index].name = value;
+      if (field === 'mietpreis') mieter[index].mietpreis = Number(value);
+      if (field === 'eigMiet') mieter[index].eigentlicherMietpreis = Number(value);
+      render();
+    }
+
+    function addMieter() {
+      mieter.push({ name: '', mietpreis: 0, eigentlicherMietpreis: 0 });
+      render();
+    }
+
+    function removeMieter(index) {
+      mieter.splice(index, 1);
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
